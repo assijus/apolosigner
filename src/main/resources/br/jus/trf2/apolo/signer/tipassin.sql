@@ -1,0 +1,1 @@
+select nval_const('$$TipAssin') from dual

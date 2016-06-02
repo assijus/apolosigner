@@ -1,0 +1,212 @@
+swagger: '2.0'
+
+info:
+  version: "1.0.0"
+  title: ApoloSigner
+  description: Micro-serviço para listar documentos, obter o hash, salvar assinaturas e visualizar PDFs do Apolo
+
+# host: assijus.jfrj.jus.br
+basePath: /apolosigner/api/v1
+schemes: [http]
+consumes: [application/json]
+produces: [application/json]
+
+tags:
+  - name: view
+    description: Listar os documentos a serem assinado e visualizar os PDFs
+  - name: sign
+    description: Obter o hash e gravar a assinatura digital
+
+paths:
+  /doc/list:
+    get:
+      description: Obter a lista de documentos a serem assinados pelo usuário portador do CPF informado
+      tags: [view,sign]
+      parameters:
+        - $ref: "#/parameters/cpf" 
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              list:
+                type: array
+                items:
+                  $ref: "#/definitions/document"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/error"
+            
+  /doc/{id}/pdf:
+    get:
+      description: Obter o PDF de um documento para visualização
+      tags: [view]
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/viewResponse"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/error"
+            
+  /doc/{id}/hash:
+    get:
+      description: Obter o hash de um documento
+      tags: [sign]
+      parameters:
+        - $ref: "#/parameters/id"
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/hashResponse"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/error"
+            
+  /doc/{id}/sign:
+    put:
+      description: Gravar a assinatura do documento
+      tags: [sign]
+      parameters:
+        - $ref: "#/parameters/id"
+        - $ref: "#/parameters/cpf" 
+        - $ref: "#/parameters/time" 
+        - name: sha1
+          in: formData
+          description: SHA-1 do PDF codificado em base64
+          required: true
+          type: string
+          format: byte
+        - name: envelope
+          in: formData
+          description: Envelope CMS/PKCS7 codificado em base64
+          required: true
+          type: string
+          format: byte
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: "#/definitions/saveResponse"
+        500:
+          description: Error ocurred
+          schema:
+            $ref: "#/definitions/error"
+            
+parameters:
+  id:
+    name: id
+    in: path
+    description: Identificador do documento
+    required: true
+    type: string
+  cpf:
+    name: cpf
+    in: query
+    description: CPF do usuário
+    required: true
+    type: number
+    format: int32
+  time:
+    name: time
+    in: formData
+    description: Data e hora da assinatura
+    required: true
+    type: string
+    format: date-time
+  certificate:
+    name: certificate
+    in: formData
+    description: Certificado X509 do assinante em base64
+    required: true
+    type: string
+    format: byte
+
+            
+definitions:
+  document:
+    type: object
+    properties:
+      id:
+        type: string
+        description: identificador do documento
+      code: 
+        type: string
+      descr: 
+        type: string
+      kind: 
+        type: string
+      origin: 
+        type: string
+      urlView: 
+        type: string
+      urlHash: 
+        type: string
+      urlSave: 
+        type: string
+    example:
+      id: 00489623760_2_67631650_1460490840000_0_0
+      code: 0100222-90.2014.4.02.0000
+      descr: Conclusão para Decisão  -  Concedida a Antecipação de tutela
+      kind: Decisão
+      origin: Apolo
+      urlView: apolo/view/00489623760_2_67631650_1460490840000_0_0
+      urlHash: apolo/hash/00489623760_2_67631650_1460490840000_0_0
+      urlSave: apolo/save/00489623760_2_67631650_1460490840000_0_0
+
+  viewResponse:
+    type: object
+    properties:
+      doc:
+        type: string
+        description: PDF codificado em base64
+    example:
+      doc: 24yd3pPUpPz4dyVdRQAP+zI7R8wTsNX9J7El/a5Bb64=
+        
+  hashResponse:
+    type: object
+    properties:
+      sha1:
+        type: string
+        format: byte
+      sha256:
+        type: string
+        format: byte
+      urlSave:
+        type: string
+    example:      
+      sha1: csTZGGSt1AG1m3T5VaIzcHX8Av0=
+      sha256: 24yd3pPUpPz4dyVdRQAP+zI7R8wTsNX9J7El/a5Bb64=
+      urlSave: apolo/save/00489623760_2_67631650_1460490840000_0_0
+
+  saveResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      warning:
+        type: array
+        items:
+          $ref: "#/definitions/warning"
+
+  warning:
+    type: object
+    properties:
+      label:
+        type: string
+      description:
+        type: string
+
+  error:
+    type: object
+    properties:
+      error:
+        type: string

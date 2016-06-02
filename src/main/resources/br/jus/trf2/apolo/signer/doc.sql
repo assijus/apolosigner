@@ -1,0 +1,1 @@
+select * from movimentotexto where coddoc=? and dthrmov=?

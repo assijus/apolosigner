@@ -1,0 +1,1 @@
+select max(seq) from DocumentoArquivo where codsecao=? and coddoc=? and dthrmov=?
