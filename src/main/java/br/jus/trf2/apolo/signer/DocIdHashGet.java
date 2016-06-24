@@ -10,9 +10,6 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.JSONObject;
@@ -20,11 +17,9 @@ import org.json.JSONObject;
 import com.crivano.restservlet.IRestAction;
 import com.crivano.restservlet.RestUtils;
 
-@SuppressWarnings("serial")
 public class DocIdHashGet implements IRestAction {
 	@Override
-	public void run(HttpServletRequest request, HttpServletResponse response,
-			JSONObject req, JSONObject resp) throws Exception {
+	public void run(JSONObject req, JSONObject resp) throws Exception {
 		final boolean fForcePKCS7 = false;
 
 		Id id = new Id(req.getString("id"));

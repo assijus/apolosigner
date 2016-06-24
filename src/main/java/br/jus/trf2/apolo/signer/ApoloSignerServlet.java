@@ -16,8 +16,8 @@ public class ApoloSignerServlet extends SwaggerServlet {
 		super.setActionPackage("br.jus.trf2.apolo.signer");
 
 		Swagger sw = new Swagger();
-		sw.loadFromInputStream(this.getServletContext().getResourceAsStream(
-				"/api/v1/swagger.yaml"));
+		sw.loadFromInputStream(this.getClass().getResourceAsStream(
+				"/swagger.yaml"));
 
 		super.setSwagger(sw);
 	}

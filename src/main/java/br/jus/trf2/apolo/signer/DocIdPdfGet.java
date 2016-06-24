@@ -18,8 +18,7 @@ import com.crivano.restservlet.RestUtils;
 
 public class DocIdPdfGet implements IRestAction {
 	@Override
-	public void run(HttpServletRequest request, HttpServletResponse response,
-			JSONObject req, JSONObject resp) throws Exception {
+	public void run(JSONObject req, JSONObject resp) throws Exception {
 		String status = null;
 		String error = null;
 		final boolean fForcePKCS7 = true;
@@ -143,7 +142,7 @@ public class DocIdPdfGet implements IRestAction {
 			if (pdf == null)
 				throw new Exception("Não foi possível converter para PDF.");
 		}
-		
+
 		if (pdf == null && exception != null)
 			throw exception;
 
