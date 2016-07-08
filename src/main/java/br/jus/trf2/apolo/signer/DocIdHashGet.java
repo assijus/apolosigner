@@ -177,12 +177,15 @@ public class DocIdHashGet implements IRestAction {
 			if (pdfCompressed == null)
 				throw new Exception("Não foi possível comprimir o PDF.");
 
-			Utils.store(sha1, pdfCompressed);
-
 			// Utils.fileWrite("pdf-compressed.pdf", pdfCompressed);
-
+			
 			// Count the number of pages
 			pagecount = PDDocument.load(pdf).getNumberOfPages();
+			if (pagecount < 1)
+				throw new Exception("Não foi possível contar o número de páginas do PDF.");
+			id.pagecount = pagecount;
+
+			Utils.store(sha1, pdfCompressed);
 		}
 
 		if (sha256 == null) {

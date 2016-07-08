@@ -93,7 +93,7 @@ public class DocIdSignPut implements IRestAction {
 
 			// Produce response
 			resp.put("status", cstmt.getObject(11));
-			resp.put("error", cstmt.getObject(12));
+			resp.put("errormsg", cstmt.getObject(12));
 			if (id.dthrultatu == null) {
 				JSONArray arr = new JSONArray();
 				JSONObject obj = new JSONObject();
