@@ -178,11 +178,12 @@ public class DocIdHashGet implements IRestAction {
 				throw new Exception("Não foi possível comprimir o PDF.");
 
 			// Utils.fileWrite("pdf-compressed.pdf", pdfCompressed);
-			
+
 			// Count the number of pages
 			pagecount = PDDocument.load(pdf).getNumberOfPages();
 			if (pagecount < 1)
-				throw new Exception("Não foi possível contar o número de páginas do PDF.");
+				throw new Exception(
+						"Não foi possível contar o número de páginas do PDF, provavelmente o documento está corrompido.");
 			id.pagecount = pagecount;
 
 			Utils.store(sha1, pdfCompressed);
@@ -228,6 +229,6 @@ public class DocIdHashGet implements IRestAction {
 
 	@Override
 	public String getContext() {
-		return "obter o hash de documento do Apolo";
+		return "obter o hash";
 	}
 }

@@ -113,6 +113,6 @@ public class DocIdSignPut implements IRestAction {
 
 	@Override
 	public String getContext() {
-		return "salvar assinatura no apolo";
+		return "salvar assinatura";
 	}
 }

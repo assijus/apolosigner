@@ -60,7 +60,7 @@ public class DocListGet implements IRestAction {
 
 	@Override
 	public String getContext() {
-		return "listar documentos do Apolo";
+		return "listar documentos";
 	}
 
 }

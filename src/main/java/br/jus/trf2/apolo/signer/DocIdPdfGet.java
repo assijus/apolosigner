@@ -7,9 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 
@@ -152,6 +149,6 @@ public class DocIdPdfGet implements IRestAction {
 
 	@Override
 	public String getContext() {
-		return "visualizar documento do Apolo";
+		return "visualizar documento";
 	}
 }
