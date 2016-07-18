@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.JSONObject;
 
@@ -167,8 +166,8 @@ public class DocIdHashGet implements IRestAction {
 			if (pdf == null)
 				throw new Exception("Não foi possível converter para PDF.");
 
-			sha1 = Base64.encodeBase64String(calcSha1(pdf));
-			sha256 = Base64.encodeBase64String(calcSha256(pdf));
+			sha1 = RestUtils.base64Encode(calcSha1(pdf));
+			sha256 = RestUtils.base64Encode(calcSha256(pdf));
 
 			// Utils.fileWrite("pdf-uncompressed-nusad.pdf", pdf);
 
@@ -205,7 +204,7 @@ public class DocIdHashGet implements IRestAction {
 		// Force PKCS7
 		if (fForcePKCS7) {
 			resp.put("policy", "PKCS7");
-			resp.put("doc", Base64.encodeBase64String(pdf));
+			resp.put("doc", RestUtils.base64Encode(pdf));
 		}
 	}
 

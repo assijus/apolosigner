@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 
-import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 
 import com.crivano.restservlet.IRestAction;
@@ -144,7 +143,7 @@ public class DocIdPdfGet implements IRestAction {
 			throw exception;
 
 		// Produce responses
-		resp.put("doc", Base64.encodeBase64String(pdf));
+		resp.put("doc", RestUtils.base64Encode(pdf));
 	}
 
 	@Override

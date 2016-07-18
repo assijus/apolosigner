@@ -23,7 +23,6 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.sql.DataSource;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -38,15 +37,6 @@ public class Utils {
 	private static final Logger log = Logger.getLogger(Utils.class.getName());
 
 	private static final Map<String, byte[]> cache = new HashMap<String, byte[]>();
-
-	public static void main(String[] args) throws IOException {
-		byte[] f = fileRead("/Users/nato/Downloads/TRF2MRU201500008_14515854.p7s");
-		fileWrite("/Users/nato/Downloads/TRF2MRU201500008_14515854.p7s.b64",
-				new Base64().encode(f));
-		byte[] f2 = fileRead("/Users/nato/Downloads/TRF2MRU201500008.pdf");
-		fileWrite("/Users/nato/Downloads/TRF2MRU201500008.pdf.b64",
-				new Base64().encode(f2));
-	}
 
 	public static void fileWrite(String filename, byte[] ba)
 			throws FileNotFoundException, IOException {
