@@ -34,8 +34,6 @@ import org.apache.http.impl.client.HttpClients;
 import com.crivano.restservlet.RestUtils;
 
 public class Utils {
-	private static final Logger log = Logger.getLogger(Utils.class.getName());
-
 	private static final Map<String, byte[]> cache = new HashMap<String, byte[]>();
 
 	public static void fileWrite(String filename, byte[] ba)
