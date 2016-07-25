@@ -1,80 +1,105 @@
-select    m.coddoc, (select formata_proc(p.numproccompl) from t_processo p where p.coddoc=m.coddoc) as Processo, (select c.descr from complemento c where c.codcompl=m.codcompl1) as Ato, m.descrmotiv as Motivo, 
-m.dthrmov as DATA_HORA_MOVIMENTO, m.CodSecao, (select u.CodUsu from Usuario u where u.CodSecao = m.CodSecao and u.NumCpf = ?) as CodUsu
-from    Movimento m
-where    m.CodSecao = 2
-and    m.CodDoc in (    --Busca todos os documentos da mesa de trabalho padrão
-            select    lvd.CodDoc
-            from     LocalVirtualDocumento lvd, (    --Busca o local virtual (mesa de trabalho) padrão do usuário para a sua lotação principal
-                                select    *
-                                from     LocalVirtualUsuario  lvu
-                                where    lvu.CodSecao = 2
-                                and    lvu.CodUsu = (    --Busca o usuário pelo CPF   
-                                            select    u.CodUsu
-                                            from     Usuario u
-                                            where    u.CodSecao = lvu.CodSecao
-                                            --Caso o usuário não possua CPF, basta inverter as linhas abaixo.
-                                            --and    u.Login = 'MPSCRR'
-                                            and    u.NumCpf = ?)
-                                and    lvu.CodLocFis = (--Busca a lotação principal do usuário
-                                             select    ul.CodLocFis
-                                              from     UsuarioLotacao ul
-                                               where    ul.CodSecao = lvu.CodSecao    
-                                             and    ul.CodUsu = (    --Busca o usuário pelo CPF
-                                                         select    u.CodUsu
-                                                         from     Usuario u
-                                                        where     u.CodSecao = ul.CodSecao
-                                                        --Caso o usuário não possua CPF, basta inverter as linhas abaixo.
-                                                        --and    u.Login = 'MPSCRR'
-                                                        and    u.NumCpf = ?)
-                                              and     ul.CodTipLot = nval_const('$$TipLotPrincUsu'))
-                                and    lvu.CodTipLocalVirt = nval_const('$$TipLocalVirtPadrao')) mesa
-            where    lvd.CodSecao = m.CodSecao
-            and    lvd.CodSecao = mesa.CodSecao
-            and    lvd.CodLocFis = mesa.CodLocFis
-            and    lvd.CodLocalVirt = mesa.CodLocalVirt)
---Verifica as fases que se deve assinar
-and    m.DtHrMov = (    select    max( m1.DtHrMov )
-            from    Movimento m1
-            where    m1.CodSecao = m.CodSecao
-            and    m1.CodDoc = m.CodDoc
-            and    (m1.CodFase in (nval_const('$$FaseResAud'), nval_const('$$FaseDecis'), nval_const('$$FaseRelatAcord'))
-                 or    (m1.CodFase in ( nval_const('$$FaseConcl'),nval_const('$$FaseInfSecr'))
-                     and exists (select 1 from movimentociclo
-                            where CodSecao = m1.CodSecao
-                            and CodDoc = m1.CodDoc
-                            and codfaseabert = m1.CodFase
-                            and DtHrMovAbert = m1.DtHrMov
-                            and DtHrMovEncer is null) ) )
-          and     not exists (    select     1 from FaseConfiguracao fc
-                        where      fc.CodSecao = m1.CodSecao
-                        and     fc.CodFase = m1.CodFase
-                        and      fc.CodCfg = nval_const('$$CfgFaseAssinRestrita')
-                        and      fc.CodQualiDoc = nval_const( '$$QualiDocProc' )
-                        and     fc.Valor = 'S'
-                        and     not  exists (select    1
-                                from       Usuario
-                                where      CodSecao = fc.CodSecao
-                                and        CodUsu = USUARIOLOGADO(m.codsecao,(select    u.CODUSU
-                                                         from     Usuario u
-                                                        where     u.CodSecao = M.CodSecao
-                                                        --Caso o usuário não possua CPF, basta inverter as linhas abaixo.
-                                                        --and    u.Login = 'MPSCRR'
-                                                        and    u.NumCpf = ?))
-                                and        CodFunc in (nval_const('$$FuncJuiz'), nval_const('$$FuncJuiza'),
-                                        nval_const('$$FuncJuizSubst'), nval_const('$$FuncJuizaSubst'))))
-            )
---Só busca os documentos que tem texto
-and    nvl( (    select    'S'
-        from    MovimentoTexto mt
-        where    mt.CodSecao = m.CodSecao
-        and    mt.CodDoc = m.CodDoc
-        and    mt.DtHrMov = m.DtHrMov
-        and    mt.TxtWord is not null ), 'N' ) = 'S'
--- Somente se ninguém assinou o movimento
-and    not Exists (    select    1
-            from    DocumentoArquivo da
-            where    da.CodSecao = m.CodSecao
-            and    da.CodDoc = m.CodDoc
-            and    da.DtHrMov = m.DtHrMov
-            AND da.Numtipmovarq=0
-           )
+SELECT m.coddoc,
+
+  (SELECT formata_proc(p.numproccompl)
+   FROM t_processo p
+   WHERE p.coddoc=m.coddoc) AS Processo,
+
+  (SELECT c.descr
+   FROM complemento c
+   WHERE c.codcompl=m.codcompl1) AS Ato,
+       m.descrmotiv AS Motivo,
+       m.dthrmov AS DATA_HORA_MOVIMENTO,
+       m.CodSecao,
+
+  (SELECT u.CodUsu
+   FROM Usuario u
+   WHERE u.CodSecao = m.CodSecao
+     AND u.NumCpf = ?) AS CodUsu
+FROM Movimento m
+WHERE m.CodSecao = 2
+  AND m.CodDoc IN (--Busca todos os documentos da mesa de trabalho padrao
+
+                   SELECT lvd.CodDoc
+                   FROM LocalVirtualDocumento lvd,
+                        (--Busca o local virtual (mesa de trabalho) padrao do usuario para a sua lotacao principal
+
+                         SELECT *
+                         FROM LocalVirtualUsuario lvu
+                         WHERE lvu.CodSecao = 2
+                           AND lvu.CodUsu = (--Busca o usuario pelo CPF
+
+                                             SELECT u.CodUsu
+                                             FROM Usuario u
+                                             WHERE u.CodSecao = lvu.CodSecao
+                                               AND u.NumCpf = ?)
+                           AND lvu.CodLocFis = (--Busca a lotacao principal do usuario
+
+                                                SELECT ul.CodLocFis
+                                                FROM UsuarioLotacao ul
+                                                WHERE ul.CodSecao = lvu.CodSecao
+                                                  AND ul.CodUsu = (--Busca o usuario pelo CPF
+
+                                                                   SELECT u.CodUsu
+                                                                   FROM Usuario u
+                                                                   WHERE u.CodSecao = ul.CodSecao
+                                                                     AND u.NumCpf = ?)
+                                                  AND ul.CodTipLot = nval_const('$$TipLotPrincUsu'))
+                           AND lvu.CodTipLocalVirt = nval_const('$$TipLocalVirtPadrao')) mesa
+                   WHERE lvd.CodSecao = m.CodSecao
+                     AND lvd.CodSecao = mesa.CodSecao
+                     AND lvd.CodLocFis = mesa.CodLocFis
+                     AND lvd.CodLocalVirt = mesa.CodLocalVirt)--Verifica as fases que se deve assinar
+AND m.DtHrMov =
+    (SELECT max(m1.DtHrMov)
+     FROM Movimento m1
+     WHERE m1.CodSecao = m.CodSecao
+       AND m1.CodDoc = m.CodDoc
+       AND (m1.CodFase IN (nval_const('$$FaseResAud'),
+                           nval_const('$$FaseDecis'),
+                           nval_const('$$FaseRelatAcord'),
+                           nval_const('$$FaseTransJulg'),
+                           nval_const('$$FaseInfSecr'),
+                           nval_const('$$FaseCert'),
+                           nval_const('$$FaseRemIntConcl'),
+                           nval_const('$$FaseRemInt'))
+            OR (m1.CodFase IN (nval_const('$$FaseConcl'),
+                               nval_const('$$FaseInfSecr'))
+                AND EXISTS
+                  (SELECT 1
+                   FROM movimentociclo
+                   WHERE CodSecao = m1.CodSecao
+                     AND CodDoc = m1.CodDoc
+                     AND codfaseabert = m1.CodFase
+                     AND DtHrMovAbert = m1.DtHrMov
+                     AND DtHrMovEncer IS NULL)))
+       AND NOT EXISTS
+         (SELECT 1
+          FROM FaseConfiguracao fc
+          WHERE fc.CodSecao = m1.CodSecao
+            AND fc.CodFase = m1.CodFase
+            AND fc.CodCfg = nval_const('$$CfgFaseAssinRestrita')
+            AND fc.CodQualiDoc = nval_const('$$QualiDocProc')
+            AND fc.Valor = 'S'
+            AND NOT EXISTS
+              (SELECT 1
+               FROM Usuario
+               WHERE CodSecao = fc.CodSecao
+                 AND CodUsu = USUARIOLOGADO(m.codsecao,
+                                              (SELECT u.CODUSU
+                                               FROM Usuario u
+                                               WHERE u.CodSecao = M.CodSecao
+                                                 AND u.NumCpf = ?)))) ) --SÃ³ busca os documentos que tem texto
+AND nvl(
+          (SELECT 'S'
+           FROM MovimentoTexto mt
+           WHERE mt.CodSecao = m.CodSecao
+             AND mt.CodDoc = m.CodDoc
+             AND mt.DtHrMov = m.DtHrMov
+             AND mt.TxtWord IS NOT NULL), 'N') = 'S' -- Somente se ninguÃ©m assinou o movimento
+AND NOT EXISTS
+    (SELECT 1
+     FROM DocumentoArquivo da
+     WHERE da.CodSecao = m.CodSecao
+       AND da.CodDoc = m.CodDoc
+       AND da.DtHrMov = m.DtHrMov
+       AND da.Numtipmovarq=0 )
