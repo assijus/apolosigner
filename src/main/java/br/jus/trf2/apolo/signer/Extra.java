@@ -8,10 +8,10 @@ public class Extra {
 
 	public Extra(String id) {
 		String[] split = id.split("_");
-		this.dthrultatu = new Timestamp(Long.valueOf(split[4]));
+		this.dthrultatu = new Timestamp(Long.valueOf(split[0]));
 		if (this.dthrultatu.getTime() == 0L)
 			this.dthrultatu = null;
-		this.pagecount = Integer.valueOf(split[5]);
+		this.pagecount = Integer.valueOf(split[1]);
 	}
 
 	public Extra(Timestamp dthrultatu, int pagecount) {
