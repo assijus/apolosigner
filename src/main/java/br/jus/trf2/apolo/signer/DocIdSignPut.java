@@ -17,6 +17,7 @@ public class DocIdSignPut implements IRestAction {
 	@Override
 	public void run(JSONObject req, JSONObject resp) throws Exception {
 		Id id = new Id(req.getString("id"));
+		Extra extra = new Extra(req.getString("extra"));
 
 		String envelope = req.getString("envelope");
 		String time = req.getString("time");
@@ -34,7 +35,7 @@ public class DocIdSignPut implements IRestAction {
 		// O pdf precisará ser recuperado do cache apenas se ele não estiver
 		// disponível na tabela do compressor automatico
 		byte[] pdfCompressed = Utils.retrieve(sha1);
-		if (pdfCompressed == null && id.dthrultatu == null)
+		if (pdfCompressed == null && extra.dthrultatu == null)
 			throw new Exception("Não foi possível recuperar o PDF comprimido.");
 
 		String msg = null;
@@ -66,7 +67,7 @@ public class DocIdSignPut implements IRestAction {
 			cstmt.setBlob(5, new ByteArrayInputStream(envelopeCompressed));
 
 			// p_NumPagTotal -> Pode passar "null"
-			cstmt.setInt(6, id.pagecount);
+			cstmt.setInt(6, extra.pagecount);
 
 			// p_NomeAssin -> Nome de quem assinou (obtido do certificado)
 			cstmt.setString(7, name);
@@ -80,8 +81,8 @@ public class DocIdSignPut implements IRestAction {
 			// Data-Hora da última atualização do arquivo do word, para impedir
 			// que seja grava a assinatura de um documento que já sofreu
 			// atualização
-			cstmt.setTimestamp(10, id.dthrultatu == null ? null
-					: new Timestamp(id.dthrultatu.getTime()));
+			cstmt.setTimestamp(10, extra.dthrultatu == null ? null
+					: new Timestamp(extra.dthrultatu.getTime()));
 
 			// Status
 			cstmt.registerOutParameter(11, Types.VARCHAR);
@@ -94,7 +95,7 @@ public class DocIdSignPut implements IRestAction {
 			// Produce response
 			resp.put("status", cstmt.getObject(11));
 			resp.put("errormsg", cstmt.getObject(12));
-			if (id.dthrultatu == null) {
+			if (extra.dthrultatu == null) {
 				JSONArray arr = new JSONArray();
 				JSONObject obj = new JSONObject();
 				obj.put("label", "pdf");

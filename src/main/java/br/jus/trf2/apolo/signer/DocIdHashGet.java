@@ -22,6 +22,7 @@ public class DocIdHashGet implements IRestAction {
 		final boolean fForcePKCS7 = false;
 
 		Id id = new Id(req.getString("id"));
+		Extra extra = new Extra(null, 0);
 
 		String sha1 = null;
 		String sha256 = null;
@@ -88,8 +89,8 @@ public class DocIdHashGet implements IRestAction {
 			pagecount = cstmt.getInt(8);
 			dthrUltAtu = cstmt.getTimestamp(9);
 
-			id.dthrultatu = dthrUltAtu;
-			id.pagecount = pagecount;
+			extra.dthrultatu = dthrUltAtu;
+			extra.pagecount = pagecount;
 
 			// recupera o pdf para fazer assinatura sem política, apenas se ele
 			// for diferente de null
@@ -183,7 +184,7 @@ public class DocIdHashGet implements IRestAction {
 			if (pagecount < 1)
 				throw new Exception(
 						"Não foi possível contar o número de páginas do PDF, provavelmente o documento está corrompido.");
-			id.pagecount = pagecount;
+			extra.pagecount = pagecount;
 
 			Utils.store(sha1, pdfCompressed);
 		}
@@ -200,6 +201,7 @@ public class DocIdHashGet implements IRestAction {
 		resp.put("urlSave", "apolo/doc/" + id.toString() + "/sign");
 		resp.put("sha1", sha1);
 		resp.put("sha256", sha256);
+		resp.put("extra", extra.toString());
 
 		// Force PKCS7
 		if (fForcePKCS7) {
