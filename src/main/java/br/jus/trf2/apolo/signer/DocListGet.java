@@ -3,22 +3,27 @@ package br.jus.trf2.apolo.signer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.crivano.restservlet.IRestAction;
+import br.jus.trf2.apolo.signer.IApoloSigner.DocListGetRequest;
+import br.jus.trf2.apolo.signer.IApoloSigner.DocListGetResponse;
+import br.jus.trf2.apolo.signer.IApoloSigner.Document;
+import br.jus.trf2.apolo.signer.IApoloSigner.IDocListGet;
 
-public class DocListGet implements IRestAction {
+public class DocListGet implements IDocListGet {
 
 	@Override
-	public void run(JSONObject req, JSONObject resp) throws Exception {
+	public void run(DocListGetRequest req, DocListGetResponse resp)
+			throws Exception {
+
 		// Parse request
-		String cpf = req.getString("cpf");
+		String cpf = req.cpf;
 
 		// Setup json array
-		JSONArray list = new JSONArray();
-
+		List<Document> list = new ArrayList<>();
 		// Get documents from Oracle
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -33,18 +38,16 @@ public class DocListGet implements IRestAction {
 			rset = pstmt.executeQuery();
 
 			while (rset.next()) {
-				JSONObject doc = new JSONObject();
+				Document doc = new Document();
 				Id id = new Id(cpf, rset.getInt("CODSECAO"),
 						rset.getLong("CODDOC"),
 						rset.getTimestamp("DATA_HORA_MOVIMENTO"), null, 0);
-				doc.put("id", id.toString());
-				doc.put("code", rset.getString("PROCESSO"));
-				doc.put("descr", rset.getString("MOTIVO"));
-				doc.put("kind", rset.getString("ATO"));
-				doc.put("origin", "Apolo");
-				doc.put("urlHash", "apolo/doc/" + doc.getString("id") + "/hash");
-				doc.put("urlView", "apolo/doc/" + doc.getString("id") + "/pdf");
-				list.put(doc);
+				doc.id = id.toString();
+				doc.code = rset.getString("PROCESSO");
+				doc.descr = rset.getString("MOTIVO");
+				doc.kind = rset.getString("ATO");
+				doc.origin = "Apolo";
+				list.add(doc);
 			}
 		} finally {
 			if (rset != null)
@@ -55,7 +58,7 @@ public class DocListGet implements IRestAction {
 				conn.close();
 		}
 
-		resp.put("list", list);
+		resp.list = list;
 	}
 
 	@Override

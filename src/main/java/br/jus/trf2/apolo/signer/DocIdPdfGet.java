@@ -7,19 +7,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 
-import org.json.JSONObject;
+import br.jus.trf2.apolo.signer.IApoloSigner.DocIdPdfGetRequest;
+import br.jus.trf2.apolo.signer.IApoloSigner.DocIdPdfGetResponse;
+import br.jus.trf2.apolo.signer.IApoloSigner.IDocIdPdfGet;
 
-import com.crivano.restservlet.IRestAction;
 import com.crivano.restservlet.RestUtils;
 
-public class DocIdPdfGet implements IRestAction {
+public class DocIdPdfGet implements IDocIdPdfGet {
+
 	@Override
-	public void run(JSONObject req, JSONObject resp) throws Exception {
+	public void run(DocIdPdfGetRequest req, DocIdPdfGetResponse resp)
+			throws Exception {
 		String status = null;
 		String error = null;
 		final boolean fForcePKCS7 = true;
 
-		Id id = new Id(req.getString("id"));
+		Id id = new Id(req.id);
 
 		byte[] pdf = null;
 
@@ -143,7 +146,7 @@ public class DocIdPdfGet implements IRestAction {
 			throw exception;
 
 		// Produce responses
-		resp.put("doc", RestUtils.base64Encode(pdf));
+		resp.doc = pdf;
 	}
 
 	@Override

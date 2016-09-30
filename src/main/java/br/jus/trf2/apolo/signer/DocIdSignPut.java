@@ -5,28 +5,29 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Date;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import br.jus.trf2.apolo.signer.IApoloSigner.DocIdSignPutRequest;
+import br.jus.trf2.apolo.signer.IApoloSigner.DocIdSignPutResponse;
+import br.jus.trf2.apolo.signer.IApoloSigner.IDocIdSignPut;
+import br.jus.trf2.apolo.signer.IApoloSigner.Warning;
 
-import com.crivano.restservlet.IRestAction;
+import com.crivano.swaggerservlet.SwaggerUtils;
 
-public class DocIdSignPut implements IRestAction {
+public class DocIdSignPut implements IDocIdSignPut {
 
 	@Override
-	public void run(JSONObject req, JSONObject resp) throws Exception {
-		Id id = new Id(req.getString("id"));
-		Extra extra = new Extra(req.getString("extra"));
+	public void run(DocIdSignPutRequest req, DocIdSignPutResponse resp)
+			throws Exception {
+		Id id = new Id(req.id);
+		Extra extra = new Extra(req.extra);
 
-		String envelope = req.getString("envelope");
-		String time = req.getString("time");
-		String name = req.getString("name");
-		String cpf = req.getString("cpf");
-		String sha1 = req.getString("sha1");
-
-		Date dtSign = javax.xml.bind.DatatypeConverter.parseDateTime(time)
-				.getTime();
+		String envelope = SwaggerUtils.base64Encode(req.envelope);
+		Date time = req.time;
+		String name = req.name;
+		String cpf = req.cpf;
+		String sha1 = SwaggerUtils.base64Encode(req.sha1);
 
 		byte[] assinatura = envelope.getBytes("UTF-8");
 
@@ -37,8 +38,6 @@ public class DocIdSignPut implements IRestAction {
 		byte[] pdfCompressed = Utils.retrieve(sha1);
 		if (pdfCompressed == null && extra.dthrultatu == null)
 			throw new Exception("Não foi possível recuperar o PDF comprimido.");
-
-		String msg = null;
 
 		// Chama a procedure que faz a gravação da assinatura
 		//
@@ -76,7 +75,7 @@ public class DocIdSignPut implements IRestAction {
 			cstmt.setString(8, cpf);
 
 			// Data-Hora em que ocorreu a assinatura
-			cstmt.setTimestamp(9, new Timestamp(dtSign.getTime()));
+			cstmt.setTimestamp(9, new Timestamp(time.getTime()));
 
 			// Data-Hora da última atualização do arquivo do word, para impedir
 			// que seja grava a assinatura de um documento que já sofreu
@@ -93,16 +92,16 @@ public class DocIdSignPut implements IRestAction {
 			cstmt.execute();
 
 			// Produce response
-			resp.put("status", cstmt.getObject(11));
-			resp.put("errormsg", cstmt.getObject(12));
+			resp.status = cstmt.getString(11);
+			String errormsg = cstmt.getString(12);
+			if (errormsg != null)
+				throw new Exception(errormsg);
 			if (extra.dthrultatu == null) {
-				JSONArray arr = new JSONArray();
-				JSONObject obj = new JSONObject();
-				obj.put("label", "pdf");
-				obj.put("description",
-						"Foi necessário criar o PDF dinamicamente.");
-				arr.put(obj);
-				resp.put("warning", arr);
+				Warning warning = new Warning();
+				warning.label = "pdf";
+				warning.description = "Foi necessário criar o PDF dinamicamente.";
+				resp.warning = new ArrayList<Warning>();
+				resp.warning.add(warning);
 			}
 		} finally {
 			if (cstmt != null)

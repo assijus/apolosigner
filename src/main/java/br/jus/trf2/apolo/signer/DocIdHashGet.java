@@ -11,17 +11,21 @@ import java.sql.Timestamp;
 import java.sql.Types;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.json.JSONObject;
 
-import com.crivano.restservlet.IRestAction;
+import br.jus.trf2.apolo.signer.IApoloSigner.DocIdHashGetRequest;
+import br.jus.trf2.apolo.signer.IApoloSigner.DocIdHashGetResponse;
+import br.jus.trf2.apolo.signer.IApoloSigner.IDocIdHashGet;
+
 import com.crivano.restservlet.RestUtils;
+import com.crivano.swaggerservlet.SwaggerUtils;
 
-public class DocIdHashGet implements IRestAction {
+public class DocIdHashGet implements IDocIdHashGet {
 	@Override
-	public void run(JSONObject req, JSONObject resp) throws Exception {
+	public void run(DocIdHashGetRequest req, DocIdHashGetResponse resp)
+			throws Exception {
 		final boolean fForcePKCS7 = false;
 
-		Id id = new Id(req.getString("id"));
+		Id id = new Id(req.id);
 		Extra extra = new Extra(null, 0);
 
 		String sha1 = null;
@@ -198,15 +202,14 @@ public class DocIdHashGet implements IRestAction {
 		}
 
 		// Produce responses
-		resp.put("urlSave", "apolo/doc/" + id.toString() + "/sign");
-		resp.put("sha1", sha1);
-		resp.put("sha256", sha256);
-		resp.put("extra", extra.toString());
+		resp.sha1 = SwaggerUtils.base64Decode(sha1);
+		resp.sha256 = SwaggerUtils.base64Decode(sha256);
+		resp.extra = extra.toString();
 
 		// Force PKCS7
 		if (fForcePKCS7) {
-			resp.put("policy", "PKCS7");
-			resp.put("doc", RestUtils.base64Encode(pdf));
+			resp.policy = "PKCS7";
+			resp.doc = pdf;
 		}
 	}
 
