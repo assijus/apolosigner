@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import br.jus.trf2.apolo.signer.IApoloSigner.DocListGetRequest;
 import br.jus.trf2.apolo.signer.IApoloSigner.DocListGetResponse;
 import br.jus.trf2.apolo.signer.IApoloSigner.Document;

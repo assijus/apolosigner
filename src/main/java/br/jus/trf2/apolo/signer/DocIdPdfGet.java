@@ -11,7 +11,7 @@ import br.jus.trf2.apolo.signer.IApoloSigner.DocIdPdfGetRequest;
 import br.jus.trf2.apolo.signer.IApoloSigner.DocIdPdfGetResponse;
 import br.jus.trf2.apolo.signer.IApoloSigner.IDocIdPdfGet;
 
-import com.crivano.restservlet.RestUtils;
+import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class DocIdPdfGet implements IDocIdPdfGet {
 
@@ -93,7 +93,7 @@ public class DocIdPdfGet implements IDocIdPdfGet {
 		}
 
 		if (pdf == null
-				&& RestUtils.getProperty("apolosigner.pdfservice.url", null) != null) {
+				&& SwaggerUtils.getProperty("apolosigner.pdfservice.url", null) != null) {
 			byte[] docCompressed = null;
 
 			// Get documents from Oracle

@@ -3,9 +3,9 @@ package br.jus.trf2.apolo.signer;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import com.crivano.restservlet.RestUtils;
 import com.crivano.swaggerservlet.Swagger;
 import com.crivano.swaggerservlet.SwaggerServlet;
+import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class ApoloSignerServlet extends SwaggerServlet {
 	private static final long serialVersionUID = -1611417120964698257L;
@@ -21,7 +21,7 @@ public class ApoloSignerServlet extends SwaggerServlet {
 				"/swagger.yaml"));
 
 		super.setSwagger(sw);
-		super.setAuthorization(RestUtils.getProperty("apolosigner.password",
+		super.setAuthorization(SwaggerUtils.getProperty("apolosigner.password",
 				null));
 	}
 }

@@ -16,7 +16,6 @@ import br.jus.trf2.apolo.signer.IApoloSigner.DocIdHashGetRequest;
 import br.jus.trf2.apolo.signer.IApoloSigner.DocIdHashGetResponse;
 import br.jus.trf2.apolo.signer.IApoloSigner.IDocIdHashGet;
 
-import com.crivano.restservlet.RestUtils;
 import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class DocIdHashGet implements IDocIdHashGet {
@@ -120,7 +119,7 @@ public class DocIdHashGet implements IDocIdHashGet {
 		}
 
 		if (sha256 == null
-				&& RestUtils.getProperty("apolosigner.pdfservice.url", null) != null) {
+				&& SwaggerUtils.getProperty("apolosigner.pdfservice.url", null) != null) {
 			byte[] docCompressed = null;
 
 			// Get documents from Oracle
@@ -171,8 +170,8 @@ public class DocIdHashGet implements IDocIdHashGet {
 			if (pdf == null)
 				throw new Exception("Não foi possível converter para PDF.");
 
-			sha1 = RestUtils.base64Encode(calcSha1(pdf));
-			sha256 = RestUtils.base64Encode(calcSha256(pdf));
+			sha1 = SwaggerUtils.base64Encode(calcSha1(pdf));
+			sha256 = SwaggerUtils.base64Encode(calcSha256(pdf));
 
 			// Utils.fileWrite("pdf-uncompressed-nusad.pdf", pdf);
 

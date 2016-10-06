@@ -13,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -31,7 +30,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-import com.crivano.restservlet.RestUtils;
+import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class Utils {
 	private static final Map<String, byte[]> cache = new HashMap<String, byte[]>();
@@ -107,7 +106,7 @@ public class Utils {
 
 	public static byte[] convertDocToPdf(byte[] doc) throws Exception {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpPost uploadFile = new HttpPost(RestUtils.getProperty(
+		HttpPost uploadFile = new HttpPost(SwaggerUtils.getProperty(
 				"apolosigner.pdfservice.url", null));
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 		builder.addTextBody("field1", "yes", ContentType.TEXT_PLAIN);
@@ -154,12 +153,12 @@ public class Utils {
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
-			String dbURL = RestUtils.getProperty("apolosigner.datasource.url",
+			String dbURL = SwaggerUtils.getProperty("apolosigner.datasource.url",
 					null);
-			String username = RestUtils.getProperty(
+			String username = SwaggerUtils.getProperty(
 					"apolosigner.datasource.username", null);
 			;
-			String password = RestUtils.getProperty(
+			String password = SwaggerUtils.getProperty(
 					"apolosigner.datasource.password", null);
 			;
 			connection = DriverManager.getConnection(dbURL, username, password);
