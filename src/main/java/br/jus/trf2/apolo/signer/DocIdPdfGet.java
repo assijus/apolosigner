@@ -7,9 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 
-import br.jus.trf2.apolo.signer.IApoloSigner.DocIdPdfGetRequest;
-import br.jus.trf2.apolo.signer.IApoloSigner.DocIdPdfGetResponse;
-import br.jus.trf2.apolo.signer.IApoloSigner.IDocIdPdfGet;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdPdfGetRequest;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdPdfGetResponse;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.IDocIdPdfGet;
 
 import com.crivano.swaggerservlet.SwaggerUtils;
 

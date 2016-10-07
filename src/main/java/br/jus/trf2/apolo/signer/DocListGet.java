@@ -6,10 +6,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.jus.trf2.apolo.signer.IApoloSigner.DocListGetRequest;
-import br.jus.trf2.apolo.signer.IApoloSigner.DocListGetResponse;
-import br.jus.trf2.apolo.signer.IApoloSigner.Document;
-import br.jus.trf2.apolo.signer.IApoloSigner.IDocListGet;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.DocListGetRequest;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.DocListGetResponse;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.Document;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.IDocListGet;
 
 public class DocListGet implements IDocListGet {
 

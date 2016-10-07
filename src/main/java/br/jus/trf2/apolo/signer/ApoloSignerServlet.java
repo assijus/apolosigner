@@ -3,7 +3,8 @@ package br.jus.trf2.apolo.signer;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import com.crivano.swaggerservlet.Swagger;
+import br.jus.trf2.assijus.system.api.IAssijusSystem;
+
 import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 
@@ -14,13 +15,10 @@ public class ApoloSignerServlet extends SwaggerServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 
+		super.setAPI(IAssijusSystem.class);
+
 		super.setActionPackage("br.jus.trf2.apolo.signer");
 
-		Swagger sw = new Swagger();
-		sw.loadFromInputStream(this.getClass().getResourceAsStream(
-				"/swagger.yaml"));
-
-		super.setSwagger(sw);
 		super.setAuthorization(SwaggerUtils.getProperty("apolosigner.password",
 				null));
 	}

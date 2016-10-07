@@ -12,9 +12,9 @@ import java.sql.Types;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import br.jus.trf2.apolo.signer.IApoloSigner.DocIdHashGetRequest;
-import br.jus.trf2.apolo.signer.IApoloSigner.DocIdHashGetResponse;
-import br.jus.trf2.apolo.signer.IApoloSigner.IDocIdHashGet;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdHashGetRequest;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdHashGetResponse;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.IDocIdHashGet;
 
 import com.crivano.swaggerservlet.SwaggerUtils;
 

@@ -8,10 +8,10 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 
-import br.jus.trf2.apolo.signer.IApoloSigner.DocIdSignPutRequest;
-import br.jus.trf2.apolo.signer.IApoloSigner.DocIdSignPutResponse;
-import br.jus.trf2.apolo.signer.IApoloSigner.IDocIdSignPut;
-import br.jus.trf2.apolo.signer.IApoloSigner.Warning;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdSignPutRequest;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdSignPutResponse;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.IDocIdSignPut;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.Warning;
 
 import com.crivano.swaggerservlet.SwaggerUtils;
 
