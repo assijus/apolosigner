@@ -7,11 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 
+import com.crivano.swaggerservlet.SwaggerUtils;
+
 import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdPdfGetRequest;
 import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdPdfGetResponse;
 import br.jus.trf2.assijus.system.api.IAssijusSystem.IDocIdPdfGet;
-
-import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class DocIdPdfGet implements IDocIdPdfGet {
 
@@ -103,8 +103,9 @@ public class DocIdPdfGet implements IDocIdPdfGet {
 			try {
 				conn = Utils.getConnection();
 				pstmt = conn.prepareStatement(Utils.getSQL("doc"));
-				pstmt.setLong(1, id.coddoc);
-				pstmt.setTimestamp(2, id.dthrmov);
+				pstmt.setInt(1, id.codsecao);
+				pstmt.setLong(2, id.coddoc);
+				pstmt.setTimestamp(3, id.dthrmov);
 				rset = pstmt.executeQuery();
 
 				if (rset.next()) {
@@ -147,7 +148,39 @@ public class DocIdPdfGet implements IDocIdPdfGet {
 
 		// Produce responses
 		resp.doc = pdf;
+		resp.secret = getSecret(id);
 	}
+	
+
+	public static String getSecret(Id id) throws Exception {
+		// Get documents from Oracle
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		try {
+			conn = Utils.getConnection();
+			pstmt = conn.prepareStatement(Utils.getSQL("secret"));
+			pstmt.setInt(1, id.codsecao);
+			pstmt.setLong(2, id.coddoc);
+			pstmt.setTimestamp(3, id.dthrmov);
+			rset = pstmt.executeQuery();
+
+			if (rset.next()) {
+				return rset.getString("secret");
+			} else {
+				throw new Exception("Nenhum DOC encontrado.");
+			}
+		} finally {
+			if (rset != null)
+				rset.close();
+			if (pstmt != null)
+				pstmt.close();
+			if (conn != null)
+				conn.close();
+		}
+
+	}
+
 
 	@Override
 	public String getContext() {

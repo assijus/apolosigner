@@ -1,1 +1,1 @@
-select * from movimentotexto where coddoc=? and dthrmov=?
+select * from movimentotexto where codsecao=? and coddoc=? and dthrmov=?

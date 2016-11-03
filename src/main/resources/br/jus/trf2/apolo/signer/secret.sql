@@ -1,0 +1,1 @@
+select codusuincl || To_char(dthrincl, 'ddmmyyyyhh24missFF9') as secret from movimento where codsecao=? and coddoc=? and dthrmov=?

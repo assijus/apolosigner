@@ -41,6 +41,7 @@ public class DocListGet implements IDocListGet {
 						rset.getLong("CODDOC"),
 						rset.getTimestamp("DATA_HORA_MOVIMENTO"), null, 0);
 				doc.id = id.toString();
+				doc.secret = rset.getString("secret");
 				doc.code = rset.getString("PROCESSO");
 				doc.descr = rset.getString("MOTIVO");
 				doc.kind = rset.getString("ATO");

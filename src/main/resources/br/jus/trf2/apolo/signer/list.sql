@@ -1,4 +1,4 @@
-SELECT m.coddoc,
+SELECT m.coddoc, m.codusuincl || To_char(m.dthrincl, 'ddmmyyyyhh24missFF9') as secret,
 
   (SELECT formata_proc(p.numproccompl)
    FROM t_processo p

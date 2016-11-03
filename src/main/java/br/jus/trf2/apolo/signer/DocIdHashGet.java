@@ -129,8 +129,9 @@ public class DocIdHashGet implements IDocIdHashGet {
 			try {
 				conn = Utils.getConnection();
 				pstmt = conn.prepareStatement(Utils.getSQL("doc"));
-				pstmt.setLong(1, id.coddoc);
-				pstmt.setTimestamp(2, id.dthrmov);
+				pstmt.setInt(1, id.codsecao);
+				pstmt.setLong(2, id.coddoc);
+				pstmt.setTimestamp(3, id.dthrmov);
 				rset = pstmt.executeQuery();
 
 				if (rset.next()) {
@@ -204,6 +205,7 @@ public class DocIdHashGet implements IDocIdHashGet {
 		resp.sha1 = SwaggerUtils.base64Decode(sha1);
 		resp.sha256 = SwaggerUtils.base64Decode(sha256);
 		resp.extra = extra.toString();
+		resp.secret = DocIdPdfGet.getSecret(id);
 
 		// Force PKCS7
 		if (fForcePKCS7) {
