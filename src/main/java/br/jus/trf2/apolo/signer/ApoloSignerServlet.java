@@ -6,27 +6,28 @@ import javax.servlet.ServletException;
 import com.crivano.swaggerservlet.SwaggerServlet;
 import com.crivano.swaggerservlet.SwaggerUtils;
 import com.crivano.swaggerservlet.dependency.TestableDependency;
-import com.crivano.swaggerservlet.dependency.UntestableDependency;
 
 import br.jus.trf2.assijus.system.api.IAssijusSystem;
 
 public class ApoloSignerServlet extends SwaggerServlet {
 	private static final long serialVersionUID = -1611417120964698257L;
+	public static String servletContext = null;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		servletContext = config.getServletContext().getContextPath().replace("/", "");
 
 		super.setAPI(IAssijusSystem.class);
 
 		super.setActionPackage("br.jus.trf2.apolo.signer");
 
-		super.setAuthorization(SwaggerUtils.getProperty("apolosigner.password", null));
+		super.setAuthorization(Utils.getProperty("password", null));
 
 		addDependency(new TestableDependency("database", "apolods", false) {
 			@Override
 			public String getUrl() {
-				return "java:/jboss/datasources/ApoloDS";
+				return Utils.getProperty("datasource.name", "java:/jboss/datasources/ApoloDS");
 			}
 
 			@Override
@@ -40,7 +41,7 @@ public class ApoloSignerServlet extends SwaggerServlet {
 
 			@Override
 			public String getUrl() {
-				return SwaggerUtils.getProperty("apolosigner.pdfservice.url", null);
+				return Utils.getProperty("pdfservice.url", null);
 			}
 
 			@Override
