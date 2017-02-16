@@ -16,7 +16,7 @@ SELECT m.coddoc, m.codusuincl || To_char(m.dthrincl, 'ddmmyyyyhh24missFF9') as s
    WHERE u.CodSecao = m.CodSecao
      AND u.NumCpf = ?) AS CodUsu
 FROM Movimento m
-WHERE m.CodSecao = 2
+WHERE m.CodSecao = Nval_const('$$SecaoAtual')
   AND m.CodDoc IN (--Busca todos os documentos da mesa de trabalho padrao
 
                    SELECT lvd.CodDoc
@@ -25,7 +25,7 @@ WHERE m.CodSecao = 2
 
                          SELECT *
                          FROM LocalVirtualUsuario lvu
-                         WHERE lvu.CodSecao = 2
+                         WHERE lvu.CodSecao = Nval_const('$$SecaoAtual')
                            AND lvu.CodUsu = (--Busca o usuario pelo CPF
 
                                              SELECT u.CodUsu

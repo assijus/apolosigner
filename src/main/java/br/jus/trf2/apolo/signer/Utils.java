@@ -156,7 +156,8 @@ public class Utils {
 				throw new Exception("Can't open connection to Oracle.");
 			PreparedStatement pstmt = null;
 			try {
-				pstmt = connection.prepareStatement(getSQL("altersession"));
+				pstmt = connection.prepareStatement(
+						"alter session set current_schema=" + Utils.getProperty("datasource.schema", "testeapolotrf"));
 				pstmt.execute();
 			} finally {
 				if (pstmt != null)
