@@ -32,7 +32,6 @@ public class DocListGet implements IDocListGet {
 			pstmt.setString(1, cpf);
 			pstmt.setString(2, cpf);
 			pstmt.setString(3, cpf);
-			pstmt.setString(4, cpf);
 			rset = pstmt.executeQuery();
 
 			while (rset.next()) {

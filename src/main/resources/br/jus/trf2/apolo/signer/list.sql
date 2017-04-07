@@ -22,29 +22,18 @@ WHERE m.CodSecao = Nval_const('$$SecaoAtual')
                    SELECT lvd.CodDoc
                    FROM LocalVirtualDocumento lvd,
                         (--Busca o local virtual (mesa de trabalho) padrao do usuario para a sua lotacao principal
-
-                         SELECT *
-                         FROM LocalVirtualUsuario lvu
-                         WHERE lvu.CodSecao = Nval_const('$$SecaoAtual')
-                           AND lvu.CodUsu = (--Busca o usuario pelo CPF
-
-                                             SELECT u.CodUsu
-                                             FROM Usuario u
-                                             WHERE u.CodSecao = lvu.CodSecao
-                                               AND u.NumCpf = ?)
-                           AND lvu.CodLocFis = (--Busca a lotacao principal do usuario
-
-                                                SELECT ul.CodLocFis
-                                                FROM UsuarioLotacao ul
-                                                WHERE ul.CodSecao = lvu.CodSecao
-                                                  AND ul.CodUsu = (--Busca o usuario pelo CPF
-
-                                                                   SELECT u.CodUsu
-                                                                   FROM Usuario u
-                                                                   WHERE u.CodSecao = ul.CodSecao
-                                                                     AND u.NumCpf = ?)
-                                                  AND ul.CodTipLot = nval_const('$$TipLotPrincUsu'))
-                           AND lvu.CodTipLocalVirt = nval_const('$$TipLocalVirtPadrao')) mesa
+                         SELECT lvu.*
+                         FROM LocalVirtualUsuario lvu, usuario u, UsuarioLotacao ul
+                         WHERE u.NumCpf = ?
+                         AND lvu.CodUsu = u.CodUsu
+                         AND u.CodSecao = lvu.CodSecao
+                         AND lvu.CodTipLocalVirt = nval_const('$$TipLocalVirtPadrao')
+                         AND lvu.CodSecao = Nval_const('$$SecaoAtual')
+                         AND ul.CodSecao = lvu.CodSecao
+                         AND ul.CodUsu = u.CodUsu
+                         AND lvu.CodLocFis = ul.CodLocFis
+                         AND ul.CodTipLot = nval_const('$$TipLotPrincUsu')
+                         ) mesa
                    WHERE lvd.CodSecao = m.CodSecao
                      AND lvd.CodSecao = mesa.CodSecao
                      AND lvd.CodLocFis = mesa.CodLocFis
