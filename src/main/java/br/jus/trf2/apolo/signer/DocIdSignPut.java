@@ -18,8 +18,7 @@ import com.crivano.swaggerservlet.SwaggerUtils;
 public class DocIdSignPut implements IDocIdSignPut {
 
 	@Override
-	public void run(DocIdSignPutRequest req, DocIdSignPutResponse resp)
-			throws Exception {
+	public void run(DocIdSignPutRequest req, DocIdSignPutResponse resp) throws Exception {
 		Id id = new Id(req.id);
 		Extra extra = new Extra(req.extra);
 
@@ -35,7 +34,7 @@ public class DocIdSignPut implements IDocIdSignPut {
 
 		// O pdf precisará ser recuperado do cache apenas se ele não estiver
 		// disponível na tabela do compressor automatico
-		byte[] pdfCompressed = Utils.retrieve(sha1);
+		byte[] pdfCompressed = SwaggerUtils.memCacheRemove(sha1);
 		if (pdfCompressed == null && extra.dthrultatu == null)
 			throw new Exception("Não foi possível recuperar o PDF comprimido.");
 
@@ -59,8 +58,7 @@ public class DocIdSignPut implements IDocIdSignPut {
 			cstmt.setTimestamp(3, id.dthrmov);
 
 			// p_Arq -> Arquivo PDF (Compactado)
-			cstmt.setBlob(4, pdfCompressed == null ? null
-					: new ByteArrayInputStream(pdfCompressed));
+			cstmt.setBlob(4, pdfCompressed == null ? null : new ByteArrayInputStream(pdfCompressed));
 
 			// p_ArqAssin -> Arquivo de assinatura (Compactado)
 			cstmt.setBlob(5, new ByteArrayInputStream(envelopeCompressed));
@@ -80,8 +78,7 @@ public class DocIdSignPut implements IDocIdSignPut {
 			// Data-Hora da última atualização do arquivo do word, para impedir
 			// que seja grava a assinatura de um documento que já sofreu
 			// atualização
-			cstmt.setTimestamp(10, extra.dthrultatu == null ? null
-					: new Timestamp(extra.dthrultatu.getTime()));
+			cstmt.setTimestamp(10, extra.dthrultatu == null ? null : new Timestamp(extra.dthrultatu.getTime()));
 
 			// Status
 			cstmt.registerOutParameter(11, Types.VARCHAR);

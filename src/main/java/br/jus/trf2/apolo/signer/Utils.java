@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -33,8 +31,6 @@ import org.apache.http.impl.client.HttpClients;
 import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class Utils {
-	private static final Map<String, byte[]> cache = new HashMap<String, byte[]>();
-
 	public static void fileWrite(String filename, byte[] ba) throws FileNotFoundException, IOException {
 		FileOutputStream fos = new FileOutputStream(filename);
 		fos.write(ba);
@@ -175,18 +171,5 @@ public class Utils {
 		String text = new Scanner(DocListGet.class.getResourceAsStream(filename + ".sql"), "UTF-8").useDelimiter("\\A")
 				.next();
 		return text;
-	}
-
-	public static void store(String sha1, byte[] ba) {
-		cache.put(sha1, ba);
-	}
-
-	public static byte[] retrieve(String sha1) {
-		if (cache.containsKey(sha1)) {
-			byte[] ba = cache.get(sha1);
-			cache.remove(sha1);
-			return ba;
-		}
-		return null;
 	}
 }
