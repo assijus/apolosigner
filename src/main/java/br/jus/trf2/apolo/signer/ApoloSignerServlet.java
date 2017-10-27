@@ -1,5 +1,10 @@
 package br.jus.trf2.apolo.signer;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.UUID;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
@@ -10,6 +15,7 @@ import com.crivano.swaggerservlet.SwaggerUtils;
 import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.jus.trf2.assijus.system.api.IAssijusSystem;
+import br.jus.trf2.assijus.system.api.IAssijusSystem.Document;
 
 public class ApoloSignerServlet extends SwaggerServlet {
 	private static final long serialVersionUID = -1611417120964698257L;
@@ -42,6 +48,37 @@ public class ApoloSignerServlet extends SwaggerServlet {
 			}
 		});
 
+		addDependency(new TestableDependency("process", "conversor-batch", false, 0, 10000) {
+			@Override
+			public String getUrl() {
+				return Utils.getProperty("datasource.name", "java:/jboss/datasources/ApoloDS") + "/batch-conv";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				Connection conn = null;
+				PreparedStatement pstmt = null;
+				ResultSet rset = null;
+				try {
+					conn = Utils.getConnection();
+					pstmt = conn.prepareStatement(Utils.getSQL("test-batch-conv"));
+					rset = pstmt.executeQuery();
+					rset.next();
+					int count = rset.getInt(1);
+					if (count > 0)
+						throw new Exception("Existem " + count + " arquivos pendentes de conversão há mais de 1 hora");
+				} finally {
+					if (rset != null)
+						rset.close();
+					if (pstmt != null)
+						pstmt.close();
+					if (conn != null)
+						conn.close();
+				}
+				return true;
+			}
+		});
+
 		addDependency(new TestableDependency("webservice", "conversor", false, 0, 10000) {
 
 			@Override
@@ -60,6 +97,25 @@ public class ApoloSignerServlet extends SwaggerServlet {
 				return pdf != null;
 			}
 
+		});
+
+		addDependency(new TestableDependency("cache", "redis", false, 0, 10000) {
+
+			@Override
+			public String getUrl() {
+				return "redis://" + MemCacheRedis.getMasterHost() + ":" + MemCacheRedis.getMasterPort() + "/"
+						+ MemCacheRedis.getDatabase() + " (" + "redis://" + MemCacheRedis.getSlaveHost() + ":"
+						+ MemCacheRedis.getSlavePort() + "/" + MemCacheRedis.getDatabase() + ")";
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				String uuid = UUID.randomUUID().toString();
+				MemCacheRedis mc = new MemCacheRedis();
+				mc.store("test", uuid.getBytes());
+				String uuid2 = new String(mc.retrieve("test"));
+				return uuid.equals(uuid2);
+			}
 		});
 
 	}
