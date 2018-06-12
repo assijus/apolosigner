@@ -1,12 +1,13 @@
 package br.jus.trf2.apolo.signer;
 
-import com.crivano.swaggerservlet.IMemCache;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 import redis.clients.util.SafeEncoder;
+
+import com.crivano.swaggerservlet.IMemCache;
+import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class MemCacheRedis implements IMemCache {
 	private static JedisPool poolMaster;
@@ -35,27 +36,27 @@ public class MemCacheRedis implements IMemCache {
 	}
 
 	public static int getDatabase() {
-		return Integer.parseInt(Utils.getProperty("redis.database", "10"));
+		return Integer.parseInt(SwaggerUtils.getProperty("assijus.redis.database", "10"));
 	}
 
 	public static String getPassword() {
-		return Utils.getProperty("redis.password", null);
+		return SwaggerUtils.getProperty("assijus.redis.password", null);
 	}
 
 	public static int getSlavePort() {
-		return Integer.parseInt(Utils.getProperty("redis.slave.port", "0"));
+		return Integer.parseInt(SwaggerUtils.getProperty("assijus.redis.slave.port", "0"));
 	}
 
 	public static String getSlaveHost() {
-		return Utils.getProperty("redis.slave.host", null);
+		return SwaggerUtils.getProperty("assijus.redis.slave.host", null);
 	}
 
 	public static String getMasterHost() {
-		return Utils.getProperty("redis.master.host", "localhost");
+		return SwaggerUtils.getProperty("assijus.redis.master.host", "localhost");
 	}
 
 	public static int getMasterPort() {
-		return Integer.parseInt(Utils.getProperty("redis.master.port", "6379"));
+		return Integer.parseInt(SwaggerUtils.getProperty("assijus.redis.master.port", "6379"));
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public class ApoloSignerServlet extends SwaggerServlet {
 			}
 		});
 
-		addDependency(new TestableDependency("process", "conversor-batch", false, 0, 10000) {
+		addDependency(new TestableDependency("process", "conversor-batch", true, 0, 10000) {
 			@Override
 			public String getUrl() {
 				return Utils.getProperty("datasource.name", "java:/jboss/datasources/ApoloDS") + "/batch-conv";
