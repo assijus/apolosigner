@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.Types;
 
 import com.crivano.swaggerservlet.SwaggerServlet;
-import com.crivano.swaggerservlet.SwaggerUtils;
 
 import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdPdfGetRequest;
 import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdPdfGetResponse;
@@ -18,8 +17,7 @@ import br.jus.trf2.assijus.system.api.IAssijusSystem.IDocIdPdfGet;
 public class DocIdPdfGet implements IDocIdPdfGet {
 
 	@Override
-	public void run(DocIdPdfGetRequest req, DocIdPdfGetResponse resp)
-			throws Exception {
+	public void run(DocIdPdfGetRequest req, DocIdPdfGetResponse resp) throws Exception {
 		String status = null;
 		String error = null;
 		final boolean fForcePKCS7 = true;
@@ -94,8 +92,7 @@ public class DocIdPdfGet implements IDocIdPdfGet {
 				conn.close();
 		}
 
-		if (pdf == null
-				&& Utils.getProperty("pdfservice.url", null) != null) {
+		if (pdf == null && SwaggerServlet.getProperty("pdfservice.url") != null) {
 			byte[] docCompressed = null;
 
 			// Get documents from Oracle
@@ -153,7 +150,6 @@ public class DocIdPdfGet implements IDocIdPdfGet {
 		SwaggerServlet.getHttpServletResponse().addHeader("Doc-Secret", getSecret(id));
 
 	}
-	
 
 	public static String getSecret(Id id) throws Exception {
 		// Get documents from Oracle
@@ -183,7 +179,6 @@ public class DocIdPdfGet implements IDocIdPdfGet {
 		}
 
 	}
-
 
 	@Override
 	public String getContext() {

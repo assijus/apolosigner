@@ -15,30 +15,41 @@ import com.crivano.swaggerservlet.SwaggerUtils;
 import com.crivano.swaggerservlet.dependency.TestableDependency;
 
 import br.jus.trf2.assijus.system.api.IAssijusSystem;
-import br.jus.trf2.assijus.system.api.IAssijusSystem.Document;
 
 public class ApoloSignerServlet extends SwaggerServlet {
 	private static final long serialVersionUID = -1611417120964698257L;
 	public static String servletContext = null;
 
 	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
+	public void initialize(ServletConfig config) throws ServletException {
+		setAPI(IAssijusSystem.class);
+		setActionPackage("br.jus.trf2.apolo.signer");
 
+		// Redis
+		//
+		addRestrictedProperty("redis.database", "10");
+		addPrivateProperty("redis.password", null);
+		addRestrictedProperty("redis.slave.port", "0");
+		addRestrictedProperty("redis.slave.host", null);
+		addRestrictedProperty("redis.master.host", "localhost");
+		addRestrictedProperty("redis.master.port", "6379");
 		SwaggerUtils.setCache(new MemCacheRedis());
 
-		servletContext = config.getServletContext().getContextPath().replace("/", "");
+		addRestrictedProperty("pdfservice.url", null);
 
-		super.setAPI(IAssijusSystem.class);
+		addRestrictedProperty("datasource.name", "java:/jboss/datasources/ApoloDS");
+		addRestrictedProperty("datasource.url", null);
+		addRestrictedProperty("datasource.username", null);
+		addPrivateProperty("datasource.password", null);
+		addRestrictedProperty("datasource.schema", "testeapolotrf");
 
-		super.setActionPackage("br.jus.trf2.apolo.signer");
-
-		super.setAuthorization(Utils.getProperty("password", null));
+		addPrivateProperty("password", null);
+		super.setAuthorization(getProperty("password"));
 
 		addDependency(new TestableDependency("database", "apolods", false, 0, 10000) {
 			@Override
 			public String getUrl() {
-				return Utils.getProperty("datasource.name", "java:/jboss/datasources/ApoloDS");
+				return getProperty("datasource.name");
 			}
 
 			@Override
@@ -51,7 +62,7 @@ public class ApoloSignerServlet extends SwaggerServlet {
 		addDependency(new TestableDependency("process", "conversor-batch", true, 0, 10000) {
 			@Override
 			public String getUrl() {
-				return Utils.getProperty("datasource.name", "java:/jboss/datasources/ApoloDS") + "/batch-conv";
+				return getProperty("datasource.name") + "/batch-conv";
 			}
 
 			@Override
@@ -83,7 +94,7 @@ public class ApoloSignerServlet extends SwaggerServlet {
 
 			@Override
 			public String getUrl() {
-				return Utils.getProperty("pdfservice.url", null);
+				return getProperty("pdfservice.url");
 			}
 
 			@Override

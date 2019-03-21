@@ -12,11 +12,12 @@ import java.sql.Types;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
+import com.crivano.swaggerservlet.SwaggerServlet;
+import com.crivano.swaggerservlet.SwaggerUtils;
+
 import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdHashGetRequest;
 import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdHashGetResponse;
 import br.jus.trf2.assijus.system.api.IAssijusSystem.IDocIdHashGet;
-
-import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class DocIdHashGet implements IDocIdHashGet {
 	@Override
@@ -117,7 +118,7 @@ public class DocIdHashGet implements IDocIdHashGet {
 				conn.close();
 		}
 
-		if (sha256 == null && Utils.getProperty("pdfservice.url", null) != null) {
+		if (sha256 == null && SwaggerServlet.getProperty("pdfservice.url") != null) {
 			byte[] docCompressed = null;
 
 			// Get documents from Oracle

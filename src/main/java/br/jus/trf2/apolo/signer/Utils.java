@@ -28,7 +28,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-import com.crivano.swaggerservlet.SwaggerUtils;
+import com.crivano.swaggerservlet.SwaggerServlet;
 
 public class Utils {
 	public static void fileWrite(String filename, byte[] ba) throws FileNotFoundException, IOException {
@@ -98,7 +98,7 @@ public class Utils {
 
 	public static byte[] convertDocToPdf(byte[] doc) throws Exception {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpPost uploadFile = new HttpPost(Utils.getProperty("pdfservice.url", null));
+		HttpPost uploadFile = new HttpPost(SwaggerServlet.getProperty("pdfservice.url"));
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 		builder.addTextBody("field1", "yes", ContentType.TEXT_PLAIN);
 		builder.addBinaryBody("arquivo", doc, ContentType.APPLICATION_OCTET_STREAM, "arquivo.doc");
@@ -131,7 +131,7 @@ public class Utils {
 		try {
 			Context initContext = new InitialContext();
 			Context envContext = (Context) initContext.lookup("java:");
-			String dsName = Utils.getProperty("datasource.name", "java:/jboss/datasources/ApoloDS");
+			String dsName = SwaggerServlet.getProperty("datasource.name");
 			DataSource ds = (DataSource) envContext.lookup(dsName);
 			Connection connection = ds.getConnection();
 			if (connection == null)
@@ -142,10 +142,10 @@ public class Utils {
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
-			String dbURL = Utils.getProperty("datasource.url", null);
-			String username = Utils.getProperty("datasource.username", null);
+			String dbURL = SwaggerServlet.getProperty("datasource.url");
+			String username = SwaggerServlet.getProperty("datasource.username");
 			;
-			String password = Utils.getProperty("datasource.password", null);
+			String password = SwaggerServlet.getProperty("datasource.password");
 			;
 			connection = DriverManager.getConnection(dbURL, username, password);
 			if (connection == null)
@@ -153,7 +153,7 @@ public class Utils {
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = connection.prepareStatement(
-						"alter session set current_schema=" + Utils.getProperty("datasource.schema", "testeapolotrf"));
+						"alter session set current_schema=" + SwaggerServlet.getProperty("datasource.schema"));
 				pstmt.execute();
 			} finally {
 				if (pstmt != null)
@@ -161,10 +161,6 @@ public class Utils {
 			}
 			return connection;
 		}
-	}
-
-	public static String getProperty(String propertyName, String defaultValue) {
-		return SwaggerUtils.getProperty(ApoloSignerServlet.servletContext + "." + propertyName, defaultValue);
 	}
 
 	public static String getSQL(String filename) {
