@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>br.jus.trf2.assijus</groupId>
 			<artifactId>assijus-system-api</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.1</version>
 		</dependency>
 
 		<dependency>
