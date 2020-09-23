@@ -36,27 +36,27 @@ public class MemCacheRedis implements IMemCache {
 	}
 
 	public static int getDatabase() {
-		return Integer.parseInt(SwaggerServlet.getProperty("redis.database"));
+		return Integer.parseInt(ApoloSignerServlet.getProp("redis.database"));
 	}
 
 	public static String getPassword() {
-		return SwaggerServlet.getProperty("redis.password");
+		return ApoloSignerServlet.getProp("redis.password");
 	}
 
 	public static int getSlavePort() {
-		return Integer.parseInt(SwaggerServlet.getProperty("redis.slave.port"));
+		return Integer.parseInt(ApoloSignerServlet.getProp("redis.slave.port"));
 	}
 
 	public static String getSlaveHost() {
-		return SwaggerServlet.getProperty("redis.slave.host");
+		return ApoloSignerServlet.getProp("redis.slave.host");
 	}
 
 	public static String getMasterHost() {
-		return SwaggerServlet.getProperty("redis.master.host");
+		return ApoloSignerServlet.getProp("redis.master.host");
 	}
 
 	public static int getMasterPort() {
-		return Integer.parseInt(SwaggerServlet.getProperty("redis.master.port"));
+		return Integer.parseInt(ApoloSignerServlet.getProp("redis.master.port"));
 	}
 
 	@Override

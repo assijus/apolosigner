@@ -20,8 +20,15 @@ public class ApoloSignerServlet extends SwaggerServlet {
 	private static final long serialVersionUID = -1611417120964698257L;
 	public static String servletContext = null;
 
+	public static ApoloSignerServlet INSTANCE = null;
+
+	public static String getProp(String name) {
+		return INSTANCE.getProperty(name);
+	}
+
 	@Override
 	public void initialize(ServletConfig config) throws ServletException {
+		this.INSTANCE = this;
 		setAPI(IAssijusSystem.class);
 		setActionPackage("br.jus.trf2.apolo.signer");
 
