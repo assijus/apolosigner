@@ -8,17 +8,16 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 
-import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdSignPutRequest;
-import br.jus.trf2.assijus.system.api.IAssijusSystem.DocIdSignPutResponse;
+import com.crivano.swaggerservlet.SwaggerUtils;
+
+import br.jus.trf2.assijus.system.api.AssijusSystemContext;
 import br.jus.trf2.assijus.system.api.IAssijusSystem.IDocIdSignPut;
 import br.jus.trf2.assijus.system.api.IAssijusSystem.Warning;
-
-import com.crivano.swaggerservlet.SwaggerUtils;
 
 public class DocIdSignPut implements IDocIdSignPut {
 
 	@Override
-	public void run(DocIdSignPutRequest req, DocIdSignPutResponse resp) throws Exception {
+	public void run(Request req, Response resp, AssijusSystemContext ctx) throws Exception {
 		Id id = new Id(req.id);
 		Extra extra = new Extra(req.extra);
 

@@ -31,6 +31,7 @@ public class ApoloSignerServlet extends SwaggerServlet {
 		this.INSTANCE = this;
 		setAPI(IAssijusSystem.class);
 		setActionPackage("br.jus.trf2.apolo.signer");
+		setApiContextClass(AssijusSystemContext.class);
 
 		// Redis
 		//
